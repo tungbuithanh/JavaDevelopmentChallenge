@@ -1,0 +1,5 @@
+FROM liquibase-base:0.4-mariadb
+
+ENV LIQUIBASE_CHANGELOG_FILE=
+
+COPY maven/sql ${LIQUIBASE_WORKDIR}/sql

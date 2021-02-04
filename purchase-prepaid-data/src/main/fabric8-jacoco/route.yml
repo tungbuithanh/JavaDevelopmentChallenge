@@ -1,0 +1,11 @@
+spec:
+  host: prepaid-services-${openshift-namespace}.${prepaid-domain}
+  port:
+    targetPort: springboot
+  to:
+    kind: Service
+    name: ${docker.application.name}
+  wildcardPolicy: None
+  tls:
+    insecureEdgeTerminationPolicy: Allow
+    termination: edge

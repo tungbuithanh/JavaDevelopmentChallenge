@@ -1,0 +1,116 @@
+spec:
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: temp-volume
+          emptyDir: {}
+        - name: logs-volume
+          persistentVolumeClaim:
+            claimName: prepaid-logs-volume-claim
+      initContainers:
+        - name: jacoco-init
+          image: ${openshift.imagePullRegistry}/ictu/jacoco-agent-docker:0.8.0
+          command: ["/bin/sh", "-c", "cp -r /jacoco /tmp/jacoco"]
+          volumeMounts:
+            - name: temp-volume
+              mountPath: /tmp
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 20m
+              memory: 128Mi
+        - name: ${liquibase.docker-image.name}
+          image: ${openshift.imagePullRegistry}/${liquibase.docker-image.name}:${project.version}
+          imagePullPolicy: Always
+          env:
+            - name: LIQUIBASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-admin-secret
+                  key: liquibase_username
+            - name: LIQUIBASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-admin-secret
+                  key: liquibase_password
+            - name: LIQUIBASE_CONTEXTS
+              value: ${liquibase.contexts}
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 20m
+              memory: 128Mi
+      containers:
+        - name: ${docker.application.name}
+          env:
+            - name: CONFIG_SERVER_USER
+              valueFrom:
+                secretKeyRef:
+                  name: config-server-secret
+                  key: username
+            - name: CONFIG_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-server-secret
+                  key: password
+            - name: SPRING_PROFILES_ACTIVE
+              value: ${prepaid-env}
+            - name: JAVA_OPTS_XMS
+              value: ${java.opts.xms}
+            - name: JAVA_OPTS_XMX
+              value: ${java.opts.xmx}
+            - name: JAVA_OPTS_MIN_HEAP_FREE_RATIO
+              value: 5
+            - name: JAVA_OPTS_MAX_HEAP_FREE_RATIO
+              value: 10
+            - name: JAVA_OPTS_GC_TIME_RATIO
+              value: 4
+            - name: JAVA_OPTS_ADAPTIVE_SIZE_POLICY_WEIGHT
+              value: 90
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: EXTRA_JAVA_OPTS
+              value: -javaagent:/tmp/jacoco/lib/jacocoagent.jar=destfile=/opt/logs/jacoco/${docker.application.name}.exec,append=false,includes=*
+          image: ${openshift.imagePullRegistry}/${docker.application.name}:${project.version}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /actuator
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+            timeoutSeconds: 3
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 768Mi
+            requests:
+              cpu: 20m
+              memory: 512Mi
+          volumeMounts:
+            - name: temp-volume
+              mountPath: /tmp
+            - name: logs-volume
+              mountPath: /opt/logs
+  strategy:
+    type: Recreate
