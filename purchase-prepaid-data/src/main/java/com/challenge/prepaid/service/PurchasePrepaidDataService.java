@@ -1,9 +1,9 @@
 package com.challenge.prepaid.service;
 
 import com.challenge.prepaid.dto.PurchasePrepaidData;
+import com.challenge.prepaid.dto.VoucherCodeData;
 
 /**
- *
  * @author tungbt
  */
 public interface PurchasePrepaidDataService {
@@ -11,5 +11,5 @@ public interface PurchasePrepaidDataService {
     /**
      * This method used to created a voucher code
      */
-    PurchasePrepaidData buyDataVoucher(PurchasePrepaidData requestBody);
+    VoucherCodeData buyDataVoucher(String dataPlanId, String mobilePhoneNumber);
 }

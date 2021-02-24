@@ -12,14 +12,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- *
  * @author tungbt
  */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "CAPACITY", schema = "prepaidtopup")
+@Table(name = "CAPACITY", schema = "nab")
 @AttributeOverride(name = "id", column = @Column(name = "CAPACITY_ID"))
 public class Capacity extends AbstractEntity {
 
@@ -36,8 +35,4 @@ public class Capacity extends AbstractEntity {
     @Size(max = 255)
     @Column(name = "DESCRIPTION")
     private String description;
-
-//    @Fetch(FetchMode.SUBSELECT)
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "capacity", orphanRemoval = true)
-//    private Set<DataPlan> dataPlan = Sets.newHashSet();
 }

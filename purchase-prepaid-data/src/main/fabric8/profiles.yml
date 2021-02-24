@@ -1,21 +1,21 @@
 - name: ipension-springboot-apps
   generator:
     includes:
-    - spring-boot
-    - java-exec
+      - spring-boot
+      - java-exec
   enricher:
     includes:
-    - fmp-name
-    - fmp-service
-    - fmp-portname
-    - fmp-metadata
-    - fmp-openshift-deploymentconfig
-    - fmp-project-label
-    - fmp-dependency
-    - fmp-pod-annotations
-    - fmp-openshift-route
-    - fmp-revision-history
-    - fmp-docker-registry-secret
+      - fmp-name
+      - fmp-service
+      - fmp-portname
+      - fmp-metadata
+      - fmp-openshift-deploymentconfig
+      - fmp-project-label
+      - fmp-dependency
+      - fmp-pod-annotations
+      - fmp-openshift-route
+      - fmp-revision-history
+      - fmp-docker-registry-secret
 #    config:
 #      fmp-service:
 #        type: LoadBalancer

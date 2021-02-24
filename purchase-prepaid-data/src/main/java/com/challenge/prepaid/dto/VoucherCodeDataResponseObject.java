@@ -1,19 +1,12 @@
-package ch.neosisit.ipension.portalservices.first.dto.api;
+package com.challenge.prepaid.dto;
 
-import ch.neosisit.ipension.frontoffice.commons.dto.BaseResponseObject;
-import ch.neosisit.ipension.frontoffice.commons.dto.Status;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  *
- * @author DNH
+ * @author tungbt
  */
 @Data
 @Getter
@@ -21,14 +14,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "The response object for employees services")
-public class EmployeeResponseObject extends BaseResponseObject {
+public class VoucherCodeDataResponseObject extends BaseResponseObject {
 
     @ApiModelProperty(notes = "Employee including Adresse, Insured Person and Work Relation data")
-    private SalariedEmployee employee;
+    private VoucherCodeData voucherCodeData;
 
     @Builder
-    public EmployeeResponseObject(Status status, SalariedEmployee employee) {
+    public VoucherCodeDataResponseObject(StatusResponse status, VoucherCodeData voucherCodeData) {
         super(status);
-        this.employee = employee;
+        this.voucherCodeData = voucherCodeData;
     }
 }

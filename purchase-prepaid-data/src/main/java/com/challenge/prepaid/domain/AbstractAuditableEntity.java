@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 /**
  * Base entity with audit information.
+ *
  * @author tungbt
  */
 @MappedSuperclass

@@ -1,12 +1,10 @@
 package com.challenge.prepaid.repository;
 
 import com.challenge.prepaid.domain.Capacity;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 /**
- *
  * @author tungbt
  */
 @Repository

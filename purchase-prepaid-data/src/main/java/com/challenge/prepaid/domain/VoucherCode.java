@@ -6,18 +6,16 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
- *
  * @author tungbt
  */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "VOUCHER_CODE", schema = "prepaidtopup")
+@Table(name = "VOUCHER_CODE", schema = "nab")
 @AttributeOverride(name = "id", column = @Column(name = "VOUCHER_CODE_ID"))
 public class VoucherCode extends AbstractEntity {
 
@@ -32,7 +30,7 @@ public class VoucherCode extends AbstractEntity {
 
     @NotNull
     @Column(name = "ISSUE_DATE")
-    private LocalDateTime issueDate;
+    private LocalDate issueDate;
 
     @NotNull
     @Column(name = "STATUS")

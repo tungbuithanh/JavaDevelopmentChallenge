@@ -2,23 +2,22 @@ package com.challenge.prepaid.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 /**
- *
  * @author tungbt
  */
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@Table(name = "DATA_PLAN", schema = "prepaidtopup")
+@Table(name = "DATA_PLAN", schema = "nab")
 @AttributeOverride(name = "id", column = @Column(name = "DATA_PLAN_ID"))
+@Accessors(chain = true)
 public class DataPlan extends AbstractEntity {
 
     @NotNull
@@ -39,10 +38,6 @@ public class DataPlan extends AbstractEntity {
     @NotNull
     @Column(name = "PRICE")
     private BigDecimal price;
-
-//    @Fetch(FetchMode.SUBSELECT)
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dataPlan", orphanRemoval = true)
-//    private Set<OrderDetail> orderDetail = Sets.newHashSet();
 
 }
 

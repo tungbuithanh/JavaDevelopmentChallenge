@@ -1,22 +1,22 @@
 package com.challenge.prepaid.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
- *
  * @author tungbt
  */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "ORDER_DETAIL", schema = "prepaidtopup")
+@Table(name = "ORDER_DETAIL", schema = "nab")
 @AttributeOverride(name = "id", column = @Column(name = "ORDER_DETAIL_ID"))
 public class OrderDetail extends AbstractEntity {
 
@@ -30,12 +30,12 @@ public class OrderDetail extends AbstractEntity {
     private int quantity;
 
     @NotNull
-    @Column(name = "TELEPHONE_NUMBER")
+    @Column(name = "MOBILE_NUMBER")
     private String telephoneNumber;
 
     @NotNull
     @Column(name = "ORDER_DATE")
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
 
     @NotNull
     @Column(name = "TRANSACTION_COST")

@@ -1,11 +1,11 @@
-package ch.neosisit.ipension.frontoffice.commons.error;
+package com.challenge.prepaid.validator;
 
-import org.apache.commons.lang3.ArrayUtils;
 import lombok.Getter;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  *
- * @author DNH
+ * @author tungbt
  */
 @Getter
 public class CommonPortalServiceResponseException extends RuntimeException {

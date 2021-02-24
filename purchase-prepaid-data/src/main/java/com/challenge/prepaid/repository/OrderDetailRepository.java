@@ -1,17 +1,13 @@
 package com.challenge.prepaid.repository;
 
-import com.challenge.prepaid.domain.Capacity;
+import com.challenge.prepaid.domain.OrderDetail;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 /**
- *
  * @author tungbt
  */
 @Repository
-public interface CapacityRepository extends JpaRepository<Capacity, Integer>, CapacityRepositoryCustom {
-
-    Capacity findById(Integer capacityId);
+public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
 
 }

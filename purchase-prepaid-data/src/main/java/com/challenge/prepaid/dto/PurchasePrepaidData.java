@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- *
  * @author tungbt
  */
 @Getter

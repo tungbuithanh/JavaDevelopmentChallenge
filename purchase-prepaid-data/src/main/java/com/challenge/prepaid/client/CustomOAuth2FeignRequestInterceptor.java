@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidGrantExcepti
 /**
  * Custom request interceptor to handle the case when the refresh token is expired (in addition to access token)
  * Inspired from https://github.com/OpenFeign/feign/issues/1100
- *
  */
 @Slf4j
 public class CustomOAuth2FeignRequestInterceptor extends OAuth2FeignRequestInterceptor {
@@ -34,9 +33,9 @@ public class CustomOAuth2FeignRequestInterceptor extends OAuth2FeignRequestInter
             if (token.getExpiresIn() < Integer.parseInt(limitTimeToRenewToken)) {
                 token = acquireAccessToken();
             }
-            
+
             return token;
-            
+
         } catch (OAuth2AccessDeniedException e) {
             if (e.getCause() instanceof InvalidGrantException && e.getCause().getMessage().toLowerCase().contains("expired")) {
                 log.warn("Caught exception due to token expiration: ", e);

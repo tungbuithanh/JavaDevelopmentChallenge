@@ -1,15 +1,11 @@
-package ch.neosisit.ipension.frontoffice.commons.dto;
+package com.challenge.prepaid.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  *
- * @author DNH
+ * @author tungbt
  */
 @Getter
 @Setter
@@ -17,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class BaseResponseObject {
+
     @ApiModelProperty(notes = "Status of the request’s result")
-    private Status status;
+    private StatusResponse status;
 }

@@ -1,17 +1,16 @@
 package com.challenge.prepaid.repository;
 
-import com.challenge.prepaid.domain.Capacity;
+import com.challenge.prepaid.domain.DataPlan;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
 /**
- *
  * @author tungbt
  */
 @Repository
-public interface CapacityRepository extends JpaRepository<Capacity, Integer>, CapacityRepositoryCustom {
+public interface DataPlanRepository extends JpaRepository<DataPlan, Integer> {
 
-    Capacity findById(Integer capacityId);
-
+    Optional<DataPlan> findById(Integer dataPlanId);
 }

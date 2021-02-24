@@ -1,10 +1,10 @@
-package ch.neosisit.ipension.frontoffice.commons.error;
+package com.challenge.prepaid.validator;
 
 import org.springframework.http.HttpStatus;
 
 /**
  *
- * @author DNH
+ * @author tungbt
  */
 public interface ErrorMessageEnumInterface {
 

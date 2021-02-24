@@ -1,80 +1,56 @@
-package ch.neosisit.ipension.portalservices.first.service.affiliate;
+package com.challenge.prepaid;
 
-import ch.neosisit.ipension.frontoffice.commons.settings.dto.DefSocieteObject;
-import ch.neosisit.ipension.frontoffice.commons.settings.rest.RestInternalSettingsService;
-import ch.neosisit.ipension.frontoffice.commons.util.AuthenticationUtil;
-import ch.neosisit.ipension.frontoffice.commons.util.TestDataLoader;
-import ch.neosisit.ipension.portalservices.first.domain.Affilie;
-import ch.neosisit.ipension.portalservices.first.dto.api.AffiliateForGetParticular;
-import ch.neosisit.ipension.portalservices.first.dto.spi.AffiliateCreationObject;
-import ch.neosisit.ipension.portalservices.first.dto.spi.AffiliateUpdateObject;
-import ch.neosisit.ipension.portalservices.first.repository.AffilieRepository;
-import ch.neosisit.ipension.portalservices.first.service.config.FirstPortalServicesTestConfiguration;
+import com.challenge.prepaid.dto.VoucherCodeData;
+import com.challenge.prepaid.service.PurchasePrepaidDataService;
+import com.challenge.prepaid.validator.CommonPortalServiceResponseException;
+import com.challenge.prepaid.validator.PurchasePrepaidErrorMessageEnum;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.Matchers.anyString;
-
-
 /**
- *
- * @author DNH
+ * @author tungbt
  */
-@ActiveProfiles(FirstPortalServicesTestConfiguration.PROFILE)
+@ActiveProfiles(PurchasePrepaidDataTestConfiguration.PROFILE)
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = FirstPortalServicesTestConfiguration.class)
+@SpringBootTest(classes = PurchasePrepaidDataTestConfiguration.class)
 @Transactional(rollbackFor = Throwable.class)
-public class AffiliateServiceTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AffiliateServiceTest.class);
+public class PurchasePrepaidDataServiceTest {
 
     @Autowired
-    private AffilieRepository affilieRepository;
+    private PurchasePrepaidDataService purchasePrepaidDataService;
 
-    @Autowired
-    private AffiliateService affiliateService;
-
-    private TestDataLoader testDataLoader = TestDataLoader.builder().path("/__files/affiliate/").build();
-
-    @Before
-    public void setup() {
-        AuthenticationUtil.login("spi");
+    @Test
+    public void testMissingMandatory() {
+        try {
+            VoucherCodeData resultVoucherCodeData = purchasePrepaidDataService.buyDataVoucher("", "0927096899");
+            Assert.fail("Business exception must be thrown");
+        } catch (CommonPortalServiceResponseException e) {
+            Assert.assertEquals("Missing mandatory attribute in request body", PurchasePrepaidErrorMessageEnum.MISSING_MANDATORY_ATTRIBUTE_IN_REQUEST_BODY, e.getErrorMessage());
+        }
     }
 
     @Test
-    public void testCreateUpdateSuccess() {
-        AffiliateCreationObject creationObject = testDataLoader.loadInstance("case_create_success.json", AffiliateCreationObject.class);
-        AffiliateCreationObject resultCreationObject = affiliateService.createAffilate(creationObject);
-        Affilie affilie = affilieRepository.findFirstAffilieByIdAffilieBackOffice(resultCreationObject.getBackofficeAffiliateId());
-        Assert.assertNotNull("New affilie must be created!", affilie);
-        AffiliateUpdateObject updateObject = testDataLoader.loadInstance("case_update_success.json", AffiliateUpdateObject.class);
-        AffiliateUpdateObject resultUpdateObject = affiliateService.updateAffiliate(updateObject, resultCreationObject.getBackofficeAffiliateId());
-        Affilie updatedAffilie = affilieRepository.findFirstAffilieByIdAffilieBackOffice(resultCreationObject.getBackofficeAffiliateId());
-        Assert.assertEquals("Updated affilie must has new numero affilie", resultUpdateObject.getAffiliateNumber(), updatedAffilie.getNumeroAffilie());
+    public void testInvalidPhoneNumber() {
+        try {
+            VoucherCodeData resultVoucherCodeData = purchasePrepaidDataService.buyDataVoucher("2", "123");
+            Assert.fail("Business exception must be thrown");
+        } catch (CommonPortalServiceResponseException e) {
+            Assert.assertEquals("Invalid phone number", PurchasePrepaidErrorMessageEnum.INVALID_PHONE, e.getErrorMessage());
+        }
     }
 
     @Test
-    public void testGetAffiliateById() {
-        AffiliateCreationObject creationObject = testDataLoader.loadInstance("case_create_success.json", AffiliateCreationObject.class);
-        AffiliateCreationObject resultCreationObject = affiliateService.createAffilate(creationObject);
-        Affilie affilie = affilieRepository.findFirstAffilieByIdAffilieBackOffice(resultCreationObject.getBackofficeAffiliateId());
-        Assert.assertNotNull("New affilie must be created!", affilie);
+    public void testBuyDataVoucherSuccess() {
 
-
-        AffiliateForGetParticular affiliateForGetParticular = affiliateService.getAffiliateDtoById(affilie.getId());
-        Assert.assertNotNull(affiliateForGetParticular);
-        Assert.assertEquals(affilie.getType(), affiliateForGetParticular.getType());
-        Assert.assertEquals(affilie.getDateAffiliation(), affiliateForGetParticular.getAffiliationDate());
+        VoucherCodeData resultVoucherCodeData = purchasePrepaidDataService.buyDataVoucher("1", "0927096899");
+        Assert.assertNotNull(resultVoucherCodeData);
+        Assert.assertEquals("84542723236AAAAAB", resultVoucherCodeData.getVoucherCode());
     }
-    
+
 }

@@ -3,43 +3,64 @@ package com.challenge.prepaid.controller.impl;
 import com.challenge.prepaid.controller.PurchasePrepaidDataApi;
 import com.challenge.prepaid.dto.PurchasePrepaidData;
 import com.challenge.prepaid.dto.VoucherCodeData;
-import com.challenge.prepaid.service.PurchasePrepaidDataService;
+import com.challenge.prepaid.dto.VoucherCodeDataResponseObject;
+import com.challenge.prepaid.service.PurchasePrepaidDataServiceAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 
 @RestController
-@Profile("purchase-prepaid-data")
+@Slf4j
 public class PurchasePrepaidDataController implements PurchasePrepaidDataApi {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PurchasePrepaidDataController.class);
 
-	@Autowired
-	private RestTemplate restTemplate;
+    @Autowired
+    private Environment env;
 
-	@Autowired
-	private PurchasePrepaidDataService purchasePrepaidDataService;
+    @Autowired
+    private PurchasePrepaidDataServiceAdapter purchasePrepaidDataServiceAdapter;
 
 
-	@Override
-	public VoucherCodeData generateVoucherCode(PurchasePrepaidData requestBody) {
+    @Override
+    public ResponseEntity<VoucherCodeDataResponseObject> buyDataVoucher(String dataPlanId, String mobilePhoneNumber) {
 
-		//TODO invoke purchasePrepaidDataService.buyDataVoucher to store requestBody to related tables
+        Instant start = Instant.now();
 
-		// get list of available voucher code
-		List<Object> voucherCode = restTemplate.getForObject("http://3rd-parties-api/voucherCodesGenerator/", List.class);
+        log.trace(String.format("Buy Data Voucher called with arguments: [%s, %s]", dataPlanId, mobilePhoneNumber));
 
-		//Assumption the service return a voucher code then we set voucher code for voucherCodeData object
+        ResponseEntity<VoucherCodeDataResponseObject> responseEntity = purchasePrepaidDataServiceAdapter.buyDataVoucher(dataPlanId, mobilePhoneNumber);
 
-		VoucherCodeData voucherCodeData = new VoucherCodeData();
+        log.debug(String.format("Time spent inside buyDataVoucher: %s", Duration.between(start, Instant.now())));
 
-		return voucherCodeData;
-	}
+        return responseEntity;
+    }
+
+    @Override
+    public String description() {
+
+        return "Purchase-prepaid-data Portal Services running at port: " + env.getProperty("local.server.port");
+    }
+
+
+    /**
+     * Inject the RestTemplateBuilder as an argument in
+     *
+     * @param builder
+     * @return
+     * @Bean method to create a RestTemplate:
+     */
+//	@Bean
+//	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+//
+//		return builder.build();
+//	}
+
 
 }

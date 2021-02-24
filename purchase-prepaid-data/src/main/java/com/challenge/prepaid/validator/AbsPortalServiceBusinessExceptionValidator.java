@@ -1,14 +1,12 @@
-package ch.neosisit.ipension.frontoffice.commons.error.validator;
+package com.challenge.prepaid.validator;
 
 import org.apache.commons.lang3.StringUtils;
-import ch.neosisit.ipension.frontoffice.commons.error.CommonPortalServiceResponseException;
-import ch.neosisit.ipension.frontoffice.commons.error.ErrorMessageEnumInterface;
 
 /**
  *
- * @author DNH
+ * @author tungbt
  */
-public abstract class PortalServiceBusinessExceptionValidator<T extends CommonPortalServiceResponseException> {
+public abstract class AbsPortalServiceBusinessExceptionValidator<T extends CommonPortalServiceResponseException> {
     public void throwIfNull(Object value, ErrorMessageEnumInterface error, Object... parameters) {
         throwIfFalse(value != null, error, parameters);
     }

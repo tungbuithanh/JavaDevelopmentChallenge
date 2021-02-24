@@ -10,17 +10,16 @@ import java.util.Arrays;
 
 
 /**
- *
  * @author tungbt
  */
 public class ApiFeignClientConfiguration {
 
     @Value("${3rd-parties-api.restserver.url.api}")
     private String coreUrl;
-    
+
     @Value("${3rd-parties-api.restserver.url.spi}")
     private String firstUrl;
-    
+
     @Value("${3rd-parties-api.security.username}")
     private String idpUserName;
 
@@ -29,7 +28,7 @@ public class ApiFeignClientConfiguration {
 
     @Value("${c3rd-parties-api.security.realmUri}")
     private String idpRealmUri;
-    
+
     @Value("${header.vertical.first-spi}")
     private String firstSpiVerticalHeader;
 

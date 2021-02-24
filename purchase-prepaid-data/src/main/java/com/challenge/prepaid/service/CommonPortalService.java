@@ -1,138 +1,100 @@
-package ch.neosisit.ipension.portalservices.first.service;
+package com.challenge.prepaid.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.validator.routines.EmailValidator;
+import com.challenge.prepaid.domain.DataPlan;
+import com.challenge.prepaid.domain.OrderDetail;
+import com.challenge.prepaid.domain.Status;
+import com.challenge.prepaid.domain.VoucherCode;
+import com.challenge.prepaid.validator.PortalServiceBusinessExceptionValidator;
+import com.challenge.prepaid.validator.PurchasePrepaidErrorMessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import ch.neosisit.ipension.frontoffice.commons.domain.core.enums.AddressType;
-import ch.neosisit.ipension.frontoffice.commons.domain.core.enums.PartnerCategory;
-import ch.neosisit.ipension.frontoffice.commons.dto.first.Address;
-import ch.neosisit.ipension.frontoffice.commons.dto.first.BaseAffiliate;
-import ch.neosisit.ipension.frontoffice.commons.error.CommonErrorMessageEnum;
-import ch.neosisit.ipension.frontoffice.commons.error.ErrorMessageEnumInterface;
-import ch.neosisit.ipension.frontoffice.commons.util.PhoneAndEmailUtil;
-import ch.neosisit.ipension.frontoffice.commons.util.PortalLocaleISOUtil;
-import ch.neosisit.ipension.portalservices.first.repository.AssureRepository;
-import ch.neosisit.ipension.portalservices.first.service.affiliate.error.UpdateAffiliateServiceErrorMessageEnum;
-import ch.neosisit.ipension.portalservices.first.validator.FirstPortalServiceBusinessExceptionValidator;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  *
- * @author ttb
+ * @author tungbt
  */
-public abstract class AbstractFirstPortalService {
-    protected static final String DOT_CHARACTER = ".";
-    protected static final String NATIONALITY_PATH_REFERENCE = "nationality";
+public abstract class CommonPortalService {
 
     @Autowired
-    protected FirstPortalServiceBusinessExceptionValidator validator;
-
-    @Autowired
-    private AssureRepository assureRepository;
+    protected PortalServiceBusinessExceptionValidator validator;
 
     /**
-     * Verify attributes of address is not null (if the parent addresses object is defined)
+     * Verify input attributes be not null
      */
-    protected void verifyAddresses(List<Address> addresses, ErrorMessageEnumInterface missingAttributeError,
-                                   ErrorMessageEnumInterface invalidISOFormat) {
-        addresses.forEach(address -> {
-            validator.throwIfStringIsBlank(address.getZipCode(), missingAttributeError);
-            validator.throwIfStringIsBlank(address.getTown(), missingAttributeError);
-            validator.throwIfStringIsBlank(address.getCountry(), missingAttributeError);
-            validator.throwIfFalse(PortalLocaleISOUtil.isValidISOCountry(address.getCountry()), invalidISOFormat);
-        });
+    protected void verifyMandatoryInput(String dataPlanId, String mobilePhoneNumber) {
+        validator.throwIfStringIsBlank(dataPlanId, PurchasePrepaidErrorMessageEnum.MISSING_MANDATORY_ATTRIBUTE_IN_REQUEST_BODY);
+        validator.throwIfStringIsBlank(mobilePhoneNumber, PurchasePrepaidErrorMessageEnum.MISSING_MANDATORY_ATTRIBUTE_IN_REQUEST_BODY);
     }
 
+    protected void validationFormatdataPlanId(String dataPlanId) {
 
-    private void validationFormatOasiNumber(String oasiNumber) {
-        validator.throwIfFalse(oasiNumber.length() <= 13, UpdateAffiliateServiceErrorMessageEnum.FIELD_OASI_NUMBER_FORMAT_WRONG);
-        validator.throwIfFalse(NumberUtils.isDigits(oasiNumber), UpdateAffiliateServiceErrorMessageEnum.FIELD_OASI_NUMBER_FORMAT_WRONG);
+        validator.throwIfFalse(NumberUtils.isDigits(dataPlanId), PurchasePrepaidErrorMessageEnum.FIELD_DATA_PLAN_ID_NUMBER_FORMAT_WRONG);
 
-    }
-
-    /**
-     * Verify affiliates attributes is not null
-     */
-    protected void verifyAffiliateAttributes(BaseAffiliate affiliate, ErrorMessageEnumInterface missingMandatoryAttributeError,
-                                             ErrorMessageEnumInterface invalidEmailError, ErrorMessageEnumInterface invalidISOFormat) {
-
-        validator.throwIfFalse(StringUtils.isNotBlank(affiliate.getAffiliateNumber()), missingMandatoryAttributeError);
-        validator.throwIfNull(affiliate.getCategory(), missingMandatoryAttributeError);
-        validator.throwIfNull(affiliate.getType(), missingMandatoryAttributeError);
-        validator.throwIfNull(affiliate.getAffiliationDate(), missingMandatoryAttributeError);
-
-        //is ISO 3166-1 format (if not null) language
-        validator.throwIfFalse(affiliate.getLanguage() == null || PortalLocaleISOUtil.isValidISOLanguage(affiliate.getLanguage().toLowerCase()), invalidISOFormat);
-
-        //is valid email format (if not null)
-        validator.throwIfFalse(affiliate.getEmail() == null || EmailValidator.getInstance().isValid(affiliate.getEmail()), invalidEmailError);
-    }
-
-    /**
-     * Verify affiliate is not null and if AFFILIATE.category = individual
-     */
-    protected void verifyAffiliateBaseOnPartnerCategory(BaseAffiliate affiliate, ErrorMessageEnumInterface missingMandatoryAttributeCategoryIndividual,
-                                                        ErrorMessageEnumInterface missingMandatoryAttributeCategoryOrganisation) {
-
-        if (PartnerCategory.PERSON.equals(affiliate.getCategory())) {
-
-            validator.throwIfStringIsBlank(affiliate.getLastName(), missingMandatoryAttributeCategoryIndividual);
-            validator.throwIfStringIsBlank(affiliate.getFirstName(), missingMandatoryAttributeCategoryIndividual);
-            validator.throwIfFalse(affiliate.getNationality() == null || PortalLocaleISOUtil.isValidNationality(affiliate.getNationality()),
-                    CommonErrorMessageEnum.INVALID_FORMAT_WITH_REFERENCE_PATH_AND_INVALID_VALUE_PLACE_HOLDER, NATIONALITY_PATH_REFERENCE, affiliate.getNationality());
-            verifyOasiNumber(affiliate.getOasiNumber(), missingMandatoryAttributeCategoryIndividual);
-        }
-        //companyName is not null if AFFILIATE.category = organisation
-        if (PartnerCategory.ORGANISATION.equals(affiliate.getCategory())) {
-            validator.throwIfStringIsBlank(affiliate.getCompanyName(), missingMandatoryAttributeCategoryOrganisation);
-        }
-    }
-
-
-    /**
-     * Verify the OasiNumber not null and has valid format.
-     */
-    protected void verifyOasiNumber(String oasiNumber, ErrorMessageEnumInterface missingMandatoryAttributeCategoryIndividual) {
-        validator.throwIfStringIsBlank(oasiNumber, missingMandatoryAttributeCategoryIndividual);
-        validationFormatOasiNumber(oasiNumber);
     }
 
     /**
      * Verify international phone number format
      */
-    protected void verifyAffiliatePhoneNumber(String phoneNumber, ErrorMessageEnumInterface invalidPhone) {
+    protected void verifyPhoneNumber(String mobilePhoneNumber) {
 
-        validator.throwIfFalse(phoneNumber == null || PhoneAndEmailUtil.validatePhone(phoneNumber), invalidPhone);
+        validator.throwIfFalse(mobilePhoneNumber == null || validatePhone(mobilePhoneNumber), PurchasePrepaidErrorMessageEnum.INVALID_PHONE);
     }
 
     /**
-     * If multiple Addresses are provided:
-     * a.	Only the first Address of type “PRIMARY” and the first Address of type “SECONDARY” are saved.
-     * b.	All other Addresses are discarded and not saved in DB
-     * @param addresses
+     * This method is used to validate international phone numbers based on the E.164 format
+     * For example about valid phone numbers format +46766861004, +17162741616 and +85294504964, (216) 208-0460
+     *
+     * @Return true if phone number is valid E.164 format
      */
-    protected List<Address> pretreatmentAddress(List<Address> addresses, ErrorMessageEnumInterface missingAttributeError) {
-        List<Address> newAddresses = new ArrayList<>();
-        if (addresses != null) {
-            boolean firstPrimary = Boolean.TRUE;
-            boolean firstSecondary = Boolean.TRUE;
-            for (Address address : addresses) {
-                validator.throwIfNull(address.getType(), missingAttributeError);
-                if (firstPrimary && AddressType.PRIMARY.equals(address.getType())) {
-                    newAddresses.add(address);
-                    firstPrimary = Boolean.FALSE;
-                }
+    private boolean validatePhone(String phoneNumber) {
+        StringBuilder sb = new StringBuilder(200);
 
-                if (firstSecondary && AddressType.SECONDARY.equals(address.getType())) {
-                    newAddresses.add(address);
-                    firstSecondary = Boolean.FALSE;
-                }
-            }
-        }
-        return newAddresses;
+        // Country code
+        sb.append("^(\\+{1}[\\d]{1,3})?");
+
+        // Area code, with or without parentheses
+        sb.append("([\\s])?(([\\(]{1}[\\d]{2,3}[\\)]{1}[\\s]?)|([\\d]{2,3}[\\s]?))?");
+
+        // Phone number separator can be "-", "." or " "
+
+        // Minimum of 5 digits (for fixed line phones in Solomon Islands)
+        sb.append("\\d[\\-\\.\\s]?\\d[\\-\\.\\s]?\\d[\\-\\.\\s]?\\d[\\-\\.\\s]?\\d[\\-\\.\\s]?");
+
+        // 4 more optional digits
+        sb.append("\\d?[\\-\\.\\s]?\\d?[\\-\\.\\s]?\\d?[\\-\\.\\s]?\\d?$");
+
+        return Pattern.compile(sb.toString()).matcher(phoneNumber).find();
     }
 
+    protected int getRandomNumber(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
+
+    protected OrderDetail createOrderDetail(DataPlan dataPlan, String mobilePhoneNumber) {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setDataPlan(dataPlan);
+        orderDetail.setOrderDate(LocalDate.now());
+        orderDetail.setQuantity(1);
+        orderDetail.setTelephoneNumber(mobilePhoneNumber);
+        orderDetail.setTotal(dataPlan.getPrice());
+        orderDetail.setTransactionCost(new BigDecimal("0"));
+
+        return orderDetail;
+    }
+
+    protected VoucherCode createVoucherCode(OrderDetail orderDetail, String code) {
+        VoucherCode voucherCode = new VoucherCode();
+        voucherCode.setIssueDate(LocalDate.now());
+        voucherCode.setOrderDetail(orderDetail);
+        voucherCode.setStatus(Status.SUCCESS);
+        voucherCode.setVoucherCode(code);
+        return voucherCode;
+    }
 
 }

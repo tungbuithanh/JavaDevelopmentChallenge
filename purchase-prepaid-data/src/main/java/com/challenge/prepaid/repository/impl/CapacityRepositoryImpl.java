@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author tungbt
  */
 public class CapacityRepositoryImpl implements CapacityRepositoryCustom {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Override
     public List<Capacity> findByCapacityName() {
 
