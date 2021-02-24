@@ -1,4 +1,4 @@
-package com.eureka.zuul;
+package com.challenge.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,12 +6,11 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 @SpringBootApplication
-@EnableEurekaClient 	// It acts as a eureka client
-@EnableZuulProxy		// Enable Zuul
+@EnableEurekaClient
+@EnableZuulProxy
+public class DevelopmentChallengeGatewayApplication {
 
-public class SpringZuulApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(SpringZuulApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DevelopmentChallengeGatewayApplication.class, args);
+    }
 }
