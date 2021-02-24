@@ -29,4 +29,4 @@ purchase-prepaid-data\src\main\resources\application.properties
 	request from front end, stored data to DB and return voucher code. 
 
 ### Execution a simple testing:
-* Open browser and enter http://localhost:8082/api/voucherCode?dataPlanId=5&mobilePhoneNumber=84908226345
+* Open a browser and enter URL http://localhost:8082/api/voucherCode?dataPlanId=5&mobilePhoneNumber=84908226345
