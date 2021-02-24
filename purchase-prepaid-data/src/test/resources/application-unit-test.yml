@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: core-portal-services-test
+  datasource:
+    url: jdbc:h2:mem:coreportalservices;DB_CLOSE_DELAY=0;INIT=CREATE SCHEMA IF NOT EXISTS coreportalservices\;
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate.ddl-auto: update
+
+hibernate:
+  dialect: org.hibernate.dialect.H2Dialect
+  show_sql: true
+  hbm2ddl:
+    auto: update
+
+
+idp:
+  management-api:
+    access-token-uri: https://dummy-server:8080/auth/realms/dev-ipensionportal-cp/protocol/openid-connect/token
+    url: https://dummy-server:8080/management/realms
+    realm: dummyrealm
+    username: dummyusername
+    password: dummypassword
+    authentication-client-id: dummyclient
+  execute-actions-email:
+    lifespan: 60
+    required-actions:
+      - step1
+      - step2
+      - step3
+  group:
+    end-user:
+      id: id
+
+settings:
+  service:
+    url: http://settings-portal-services-app:8080/internal-api
+
+grpc:
+  nettyChannel:
+    # Default 8KB
+    maxHeaderListSizeInKb: 100
+
+async-task-executor:
+  core-pool-size: 2
+  max-pool-size: 2
+  queue-capacity: 500
+  default-timeout: 360000
+
+
+archive-interface:
+  grpcserver:
+    host: archive-interface-bridge-portal
+    port: 6565
