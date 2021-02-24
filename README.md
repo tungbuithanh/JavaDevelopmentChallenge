@@ -11,12 +11,12 @@ The source code based on requirement NAB-VDC Java Take-home Assigmment V2 with a
 * 3rd-parties-api corresponding with your configuration  
 
 ##### Order deployment
-- [DevelopmentChallengeServerApp] - It’s the naming server or service registry.
-     is the naming server (service registry), in case we want to call other services 
-	 that just use the service name instead IP addresses / port  of micro services.
+- [DevelopmentChallengeServerApp] - It’s the naming server or service registry. 
+	 In case we want to call others services that just use the service name 
+	 instead of IP addresses / ports of micro services.
 	 
 - [VoucherCodeGeneratorApp] -  A mock service of 3rd party to return the voucher code.
-     this is a simple micro service acts as a voucher code generator; each voucher has 
+     This is a simple micro service acts as a voucher code generator; each voucher has 
 	 an id and code. To make it simple I have created several voucher codes by hard 
 	 code in the service.
 	 
@@ -27,8 +27,3 @@ The source code based on requirement NAB-VDC Java Take-home Assigmment V2 with a
 - [PurchasePrepaidDataApp] -   API service to integrate with 3rd parties, handle 
 	request from front end, stored data to DB and return voucher code. 
 
-If you find it useful, please support the project by spreading the word.
-
-You can send an email at: tungbuithanh1977@gmail.com
-
-Thanks.
