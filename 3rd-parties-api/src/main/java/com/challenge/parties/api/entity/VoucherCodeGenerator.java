@@ -2,12 +2,12 @@ package com.challenge.parties.api.entity;
 
 import java.io.Serializable;
 
-public class VoucherCode implements Serializable {
+public class VoucherCodeGenerator implements Serializable {
 
     private int id;
     private String code;
 
-    public VoucherCode(int id, String code) {
+    public VoucherCodeGenerator(int id, String code) {
         this.id = id;
         this.code = code;
     }
